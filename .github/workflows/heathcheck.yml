@@ -1,0 +1,29 @@
+
+name: Anecdotes Site Health Check
+
+on:
+  schedule:
+    - cron: 0 4 1/4 * *
+
+jobs:
+  health-check:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Check Anecdotes site health at Heroku
+        uses: jtalk/url-health-check-action@9f9a163f533fcbf8b3d9fe1bf5458e8c23502698
+        with:
+          url: https://${{ secrets.HEROKU_APP_NAME }}.herokuapp.com/
+          follow-redirect: false
+          max-attempts: 3
+          retry-delay: 5s
+          retry-all: false
+
+      - name: Notify in Slack about a failure
+        uses: 8398a7/action-slack@047b09b154480ed39076984b64f324fff010d703
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          status: ${{ job.status }}
+          text: A scheduled Anecdotes site health check for the Heroku deployment (https://${{ secrets.HEROKU_APP_NAME }}.herokuapp.com/) failed!
+          fields: workflow,job
+        if: failure()

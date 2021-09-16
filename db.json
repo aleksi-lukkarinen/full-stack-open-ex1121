@@ -1,0 +1,84 @@
+{
+  "anecdotes": [
+    {
+      "id": "PXCJoHN",
+      "content": "If it hurts, do it more often.",
+      "votes": 8
+    },
+    {
+      "id": "O4IUA_-",
+      "content": "Adding manpower to a late software project makes it later!",
+      "votes": 12
+    },
+    {
+      "id": "EcgILcV",
+      "content": "The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.",
+      "votes": 6
+    },
+    {
+      "id": "S82xUvV",
+      "content": "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
+      "votes": 19
+    },
+    {
+      "id": "o2Ch1PX",
+      "content": "Premature optimization is the root of all evil.",
+      "votes": 42
+    },
+    {
+      "id": "rDd7QV_",
+      "content": "Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.",
+      "votes": 3
+    },
+    {
+      "id": "fwYnZkB",
+      "content": "Joka toiselle kuoppaa kaivaa; joka toiselle ei.",
+      "votes": 26
+    },
+    {
+      "id": "cjFW3jf",
+      "content": "Kumpi ja kampi tappelivat; Kumpi voitti.",
+      "votes": 1
+    },
+    {
+      "id": "xqnEQGk",
+      "content": "Kaksi kaivaa kuoppaa, jota kolmas täyttää.",
+      "votes": 8
+    },
+    {
+      "id": "VzVvNBr",
+      "content": "Life is not a problem to be solved, but a reality to be experienced.",
+      "votes": 2
+    },
+    {
+      "id": "Kkwbn6A",
+      "content": "My mama always said, life is like a box of chocolates. You never know what you’re gonna get.",
+      "votes": 1
+    },
+    {
+      "id": "9mK4JNV",
+      "content": "The way I see it, if you want the rainbow, you gotta put up with the rain.",
+      "votes": 3
+    },
+    {
+      "id": "n1rGYrr",
+      "content": "The greatest glory in living lies not in never falling, but in rising every time we fall.",
+      "votes": 7
+    },
+    {
+      "id": "oYv82Az",
+      "content": "Life is what happens when you're busy making other plans.",
+      "votes": 2
+    },
+    {
+      "id": "qvye0s8",
+      "content": "Always remember that you are absolutely unique. Just like everyone else.",
+      "votes": 3
+    },
+    {
+      "id": "LxSpZ9M",
+      "content": "Do not go where the path may lead, go instead where there is no path and leave a trail.",
+      "votes": 8
+    }
+  ]
+}

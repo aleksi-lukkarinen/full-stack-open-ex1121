@@ -1,0 +1,102 @@
+
+name: Anecdotes Site Main Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
+
+jobs:
+  compile-test:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Check out the sources
+        uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint the code
+        run: npm run eslint
+
+      - name: Create deliverables for production
+        run: npm run build
+
+      - name: Run unit tests
+        run: npm test
+
+      - name: Increase the version and create a tag
+        if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
+        uses: anothrNick/github-tag-action@eca2b69f9e2c24be7decccd0f15fdb1ea5906598
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: patch
+          RELEASE_BRANCHES: main
+
+      - name: Notify in Slack about a failure
+        uses: 8398a7/action-slack@047b09b154480ed39076984b64f324fff010d703
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          status: ${{ job.status }}
+          text: An Anecdotes site build failed!
+          fields: repo,commit,ref,workflow,message,author,job,took
+        if: failure()
+
+  deploy-to-heroku:
+    needs: compile-test
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Check out the full history
+        uses: actions/checkout@v2
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Deploy to Heroku
+        if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
+        uses: akhileshns/heroku-deploy@79ef2ae4ff9b897010907016b268fd0f88561820
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          dontautocreate: true
+          delay: 5
+          healthcheck: ${{ secrets.HEROKU_HEALTH_CHECK_URL }}
+          checkstring: ok
+          rollbackonhealthcheckfailed: true
+
+      - name: Notify in Slack about a success
+        uses: 8398a7/action-slack@047b09b154480ed39076984b64f324fff010d703
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          status: custom
+          fields: repo,commit,ref,workflow,message,author,job,took
+          custom_payload: |
+            {
+              text: `A new Anecdotes site version (${ process.env.AS_COMMIT }) has been deployed to https://${{ secrets.HEROKU_APP_NAME }}.herokuapp.com/`,
+              attachments: [{
+                color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
+                text: `From: ${ process.env.AS_REPO }@${ process.env.AS_REF }\nBy: ${ process.env.AS_WORKFLOW }/${ process.env.AS_JOB }\nBuild took ${ process.env.AS_TOOK }.\n\nCommit author: ${ process.env.AS_AUTHOR }\nCommit message: ${ process.env.AS_MESSAGE }`,
+              }]
+            }
+        if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') && job.status == 'success' }}
+
+      - name: Notify in Slack about a failure
+        uses: 8398a7/action-slack@047b09b154480ed39076984b64f324fff010d703
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          status: ${{ job.status }}
+          text: An Anecdotes site deployment to Heroku failed!
+          fields: repo,commit,ref,workflow,message,author,job,took
+        if: failure()
